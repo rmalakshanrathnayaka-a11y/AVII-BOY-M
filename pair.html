@@ -3,100 +3,94 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AVII BOY MD Pair</title>
+  <title>PAIR CODE</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <style>
-:root {
-      --primary: #ff4d4d;
-      --accent: #25d366;
-      --bg: #0f0f0f;
-      --text: #f1f1f1;
-      --input-bg: #1e1e1e;
-      --input-border: #333;
-      --shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-}
-
-    * {
-      box-sizing: border-box;
+    body {
       margin: 0;
       padding: 0;
-}
-
-    body {
-      background: var(--bg);
-      color: var(--text);
+      background: linear-gradient(135deg, #0f0f0f, #1a1a1a);
       font-family: 'Segoe UI', sans-serif;
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      padding: 1rem;
 }
 
-.card {
-      background: linear-gradient(145deg, #1a1a1a, #0d0d0d);
+.container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+}
+
+.box {
+      background: #a20000;
       padding: 2rem;
       border-radius: 1rem;
-      box-shadow: var(--shadow);
-      width: 100%;
-      max-width: 400px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.6);
+      width: 90%;
+      max-width: 350px;
       text-align: center;
       animation: fadeIn 1s ease-in-out;
 }
 
-.card h2 {
+.box h3 {
       margin-bottom: 0.5rem;
-      font-size: 1.6rem;
-      color: var(--primary);
+      font-size: 1.5rem;
 }
 
-.card p {
-      font-size: 0.95rem;
+.box h6 {
+      font-weight: normal;
+      color: #f0f0f0;
       margin-bottom: 1.5rem;
-      color: #ccc;
 }
 
-    input[type="tel"] {
+.input-container {
+      display: flex;
+      background: #fff;
+      border-radius: 1rem;
+      overflow: hidden;
       width: 100%;
-      padding: 0.9rem;
-      border: 1px solid var(--input-border);
-      border-radius: 0.5rem;
-      background: var(--input-bg);
-      color: var(--text);
-      font-size: 1rem;
       margin-bottom: 1rem;
-      transition: border 0.3s;
 }
 
-    input[type="tel"]:focus {
-      border-color: var(--accent);
+.input-container input {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background: #000;
+      color: #fff;
+      font-size: 1rem;
+      border-left: 3px solid #25d366;
+}
+
+.input-container input:focus {
       outline: none;
+      box-shadow: inset 0 0 5px #25d366;
 }
 
-    button {
-      width: 100%;
-      padding: 0.9rem;
-      background: var(--accent);
+.input-container button {
+      background: #25d366;
       color: #fff;
       font-weight: bold;
+      padding: 1rem;
       border: none;
-      border-radius: 0.5rem;
-      font-size: 1rem;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s;
 }
 
-    button:hover {
+.input-container button:hover {
       background: #128c7e;
 }
 
-    #loading {
-      margin-top: 1rem;
+    #loading-spinner {
       display: none;
-      color: var(--accent);
+      margin-top: 1rem;
+      color: #fff;
 }
 
-    #response {
+    #pair {
       margin-top: 1rem;
       font-size: 1rem;
 }
@@ -111,54 +105,90 @@
       from { opacity: 0; transform: translateY(20px);}
       to { opacity: 1; transform: translateY(0);}
 }
+
+    @media (max-width: 500px) {
+.input-container {
+        flex-direction: column;
+}
+
+.input-container input,
+.input-container button {
+        width: 100%;
+        border-radius: 0;
+}
+
+.input-container input {
+        border-radius: 1rem 1rem 0 0;
+}
+
+.input-container button {
+        border-radius: 0 0 1rem 1rem;
+}
+}
   </style>
 </head>
 <body>
-  <div class="card">
-    <h2>📲 AVII BOY MD</h2>
-    <p>ඔබේ දුරකථන අංකය (country code සමඟ) ඇතුළත් කරන්න</p>
-    <input type="tel" id="number" placeholder="+9477xxxxxxx" />
-    <button onclick="submitNumber()">Submit</button>
-    <div id="loading"><i class="fas fa-spinner fa-spin"></i> Loading...</div>
-    <div id="response"></div>
+  <div class="container">
+    <div class="box" id="box">
+      <i class="fa fa-user fa-2x"></i>
+      <h3>Link your number with AVII BOY MD</h3>
+      <h6>🔢 Enter your number with country code</h6>
+      <div class="input-container">
+        <input type="tel" id="number" placeholder="+9477xxxxxxx" />
+        <button id="submit">Submit</button>
+      </div>
+      <div id="loading-spinner">
+        <i class="fas fa-spinner fa-spin"></i> Getting your code...
+      </div>
+      <main id="pair"></main>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <script>
-    async function submitNumber() {
-      const numberInput = document.getElementById("number");
-      const responseDiv = document.getElementById("response");
-      const loading = document.getElementById("loading");
-      const number = numberInput.value.trim();
+    const pair = document.getElementById("pair");
+    const submit = document.getElementById("submit");
+    const numberInput = document.getElementById("number");
+    const spinner = document.getElementById("loading-spinner");
 
-      responseDiv.innerHTML = "";
-      if (!number || number.length < 10) {
-        responseDiv.innerHTML = "❗ කරුණාකර නිවැරදි අංකයක් ඇතුළත් කරන්න.";
+    async function Copy() {
+      const obj = document.getElementById("copy");
+      const original = obj.innerText;
+      const code = original.replace("CODE: ", "");
+      await navigator.clipboard.writeText(code);
+      obj.innerText = "✔️ COPIED";obj.style.color = "lime";
+      setTimeout(() => {
+        obj.innerText = original;
+        obj.style.color = "#00bfff";
+}, 1000);
+}
+
+    submit.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const raw = numberInput.value.trim();
+      const digits = raw.replace(/[^0-9]/g, "");
+
+      if (!digits || digits.length < 10) {
+        pair.innerHTML = <span style="color: #ffcccb; font-weight: bold;">❗ Please enter a valid number.</span>;
         return;
 }
 
-      loading.style.display = "block";
+      numberInput.value = "+" + digits.replace(/(\d{3})(\d{4})(\d{3,})/, "$1 $2 $3");
+      numberInput.style.fontSize = "1.1rem";
+
+      spinner.style.display = "block";
+      pair.innerHTML = "";
 
       try {
-        const cleanNumber = number.replace(/[^0-9]/g, "");
-        const res = await axios.get(/code?number=${cleanNumber});
-        const code = res.data.code || "❗ සේවාව ලබා ගත නොහැක.";
-        responseDiv.innerHTML = <span id="copy" onclick="copyCode()">CODE: <strong>${code}</strong></span>;
+        const { data} = await axios.get(/code?number=${digits});
+        const code = data.code || "❗ Service Unavailable";
+        pair.innerHTML = <div id="copy" onclick="Copy()">CODE: <strong style="color:#fff">${code}</strong></div>;
 } catch (err) {
-        responseDiv.innerHTML = "❗ දෝෂයක් ඇතිවිය. නැවත උත්සාහ කරන්න.";
-} finally {loading.style.display = "none";
+        pair.innerHTML = <span style="color: #ffcccb;">❗ Error fetching code. Try again.</span>;
+} finally {
+        spinner.style.display = "none";
 }
-}
-
-    function copyCode() {
-      const codeText = document.getElementById("copy").innerText.replace("CODE: ", "");
-      navigator.clipboard.writeText(codeText);
-      const copyEl = document.getElementById("copy");
-      copyEl.innerText = "✔️ Copied!";
-      setTimeout(() => {
-        copyEl.innerText = CODE: ${codeText};
-}, 1000);
-}
+});
   </script>
 </body>
 </html>
